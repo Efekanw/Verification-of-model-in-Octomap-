@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+chan permission, click, endOfPcs;
+const int depthOfTree = 4;
+
+int[0,3] rtrValue;
+
+typedef struct {
+	int[0,3] occupancy;
+}OcTree;
+const int sizeofTree=81;
+OcTree ocTree1[sizeofTree] = {
+{0}, 
+{3}, {3}, {0}, {3}, {2}, {0}, {3}, {1},
+
+ {3}, {0}, {3}, {0}, {0}, {2}, {3}, {0},
+ {3}, {0}, {2}, {0}, {0}, {3}, {3}, {2}, 
+
+ {1}, {3}, {2}, {3}, {3}, {1}, {1}, {1},
+ {3}, {1}, {1}, {3}, {2}, {3}, {2}, {2},
+ {1}, {1}, {3}, {3}, {3}, {2}, {1}, {3},
+ {2}, {1}, {1}, {2}, {1}, {2}, {3}, {1},
+
+ {3}, {1}, {0}, {1}, {2}, {1}, {1}, {1}, 
+ {3}, {3}, {3}, {2}, {2}, {1}, {1}, {1},
+ {3}, {1}, {1}, {3}, {1}, {2}, {3}, {1}};
+
+const int sizeofPruned=25;
+int pruned1[sizeofPruned] = {0,0,0,16,0,0,32,0,0,0,184,0,192,192,0,0,208,0,344,0,352,352,0,0,0};
+
+int[1,8] record[depthOfTree]; 
+
+const int sum[depthOfTree-1] = {1, 9, 73};
+</declaration><template><name x="5" y="5">OcTreeWalk</name><parameter>OcTree &amp;ocTree[sizeofTree],int &amp;pruned[sizeofPruned]</parameter><declaration>// Place local declarations here.
+
+int childNode = 0;
+int depth = 0;
+int calca(int t_depth){
+	int sumofa=0;
+	int i=t_depth; 
+	if(t_depth == 0)
+	{
+             return 0;
+	}
+	while(i&gt;0)
+	{
+		int sumofpow=1;
+		int x=0; 
+		while(x&lt;i)
+		{
+			sumofpow*=8;
+			x++;
+		}
+		sumofa+=(record[t_depth+(-1)*(i-1)]-1)*sumofpow;
+		i--;
+	}
+	return sumofa; 
+	
+	
+}
+
+int NextNode(int t_depth, int t_childNode){
+	return sum[t_depth] + calca(t_depth) + record[t_depth+1] - 1 - pruned[t_childNode];
+}</declaration><location id="id0" x="-936" y="-448"><committed/></location><location id="id1" x="-688" y="-448"><committed/></location><location id="id2" x="-280" y="-40"><name x="-296" y="-72">Error_EndOfTree</name></location><location id="id3" x="-280" y="-208"><name x="-296" y="-240">Success</name></location><location id="id4" x="-976" y="-208"><name x="-1072" y="-216">WalkInitial</name></location><location id="id5" x="-816" y="-208"><name x="-832" y="-248">Walk</name><committed/></location><init ref="id4"/><transition><source ref="id0"/><target ref="id5"/><label kind="assignment" x="-1336" y="-360">childNode = NextNode(depth, childNode),
+depth++,
+rtrValue = 0</label><nail x="-1064" y="-448"/><nail x="-1064" y="-328"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-400">record[depth+1]=1</label><nail x="-720" y="-376"/><nail x="-904" y="-376"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-424">record[depth+1]=2</label><nail x="-720" y="-400"/><nail x="-904" y="-400"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-448">record[depth+1]=3</label><nail x="-720" y="-424"/><nail x="-904" y="-424"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-472">record[depth+1]=4</label></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-496">record[depth+1]=5</label><nail x="-720" y="-472"/><nail x="-904" y="-472"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-520">record[depth+1]=6</label><nail x="-720" y="-496"/><nail x="-904" y="-496"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-544">record[depth+1]=7</label><nail x="-720" y="-520"/><nail x="-904" y="-520"/></transition><transition><source ref="id1"/><target ref="id0"/><label kind="assignment" x="-864" y="-568">record[depth+1]=8</label><nail x="-720" y="-544"/><nail x="-904" y="-544"/></transition><transition><source ref="id5"/><target ref="id1"/><label kind="guard" x="-696" y="-312">ocTree[childNode].occupancy==0 &amp;&amp;
+depth &lt; depthOfTree-1</label><nail x="-536" y="-328"/><nail x="-536" y="-448"/></transition><transition><source ref="id5"/><target ref="id2"/><label kind="guard" x="-720" y="-64">ocTree[childNode].occupancy==0 &amp;&amp;depth == depthOfTree -1</label><label kind="assignment" x="-592" y="-80">rtrValue = 0</label><nail x="-816" y="-40"/></transition><transition><source ref="id5"/><target ref="id3"/><label kind="guard" x="-744" y="-200">ocTree[childNode].occupancy!=0 &amp;&amp;
+depth&lt;=depthOfTree-1</label><label kind="assignment" x="-688" y="-232">rtrValue=ocTree[childNode].occupancy</label><nail x="-760" y="-208"/><nail x="-504" y="-208"/></transition><transition><source ref="id4"/><target ref="id5"/></transition></template><template><name>Coordinates</name><declaration>
+int tempDepth = 0;
+int[1, 8] child;
+
+</declaration><location id="id6" x="-560" y="-304"><name x="-536" y="-312">CrdEnd</name></location><location id="id7" x="-1176" y="-312"><name x="-1200" y="-352">CrdInitial</name></location><location id="id8" x="-712" y="-304"><name x="-800" y="-312">CrdWrite</name><committed/></location><location id="id9" x="-1024" y="-312"><name x="-1056" y="-344">Crd</name><committed/></location><init ref="id7"/><transition><source ref="id8"/><target ref="id6"/><label kind="guard" x="-680" y="-344">tempDepth == depthOfTree - 1</label><label kind="synchronisation" x="-680" y="-328">endOfPcs!</label></transition><transition><source ref="id7"/><target ref="id9"/><label kind="synchronisation" x="-1128" y="-336">click?</label></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-176">child=8</label><nail x="-952" y="-152"/><nail x="-776" y="-152"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-208">child=7</label><nail x="-952" y="-184"/><nail x="-776" y="-184"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-240">child=6</label><nail x="-952" y="-216"/><nail x="-776" y="-216"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-272">child=5</label><nail x="-952" y="-248"/><nail x="-776" y="-248"/></transition><transition><source ref="id8"/><target ref="id9"/><label kind="guard" x="-952" y="-504">tempDepth &lt; depthOfTree - 1</label><label kind="assignment" x="-944" y="-480">tempDepth=tempDepth+1</label><nail x="-712" y="-456"/><nail x="-1024" y="-456"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-304">child=4</label><nail x="-952" y="-280"/><nail x="-776" y="-280"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-352">child=3</label><nail x="-952" y="-328"/><nail x="-776" y="-328"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-384">child=2</label><nail x="-952" y="-360"/><nail x="-776" y="-360"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="assignment" x="-896" y="-416">child=1</label><nail x="-952" y="-392"/><nail x="-776" y="-392"/></transition></template><template><name>Idle</name><declaration>int order = 1;</declaration><location id="id10" x="-432" y="-176"><name x="-408" y="-192">InProcess</name></location><location id="id11" x="-672" y="-176"><name x="-712" y="-192">Idle</name><committed/></location><init ref="id11"/><transition><source ref="id10"/><target ref="id11"/><label kind="synchronisation" x="-592" y="-104">endOfPcs?</label><label kind="assignment" x="-592" y="-120">order++</label><nail x="-432" y="-120"/><nail x="-672" y="-120"/></transition><transition><source ref="id11"/><target ref="id10"/><label kind="guard" x="-592" y="-248">order==2</label><label kind="synchronisation" x="-592" y="-232">permission!</label><nail x="-616" y="-208"/><nail x="-496" y="-208"/></transition><transition><source ref="id11"/><target ref="id10"/><label kind="guard" x="-592" y="-304">order==1</label><label kind="synchronisation" x="-592" y="-288">click!</label><nail x="-616" y="-264"/><nail x="-496" y="-264"/></transition></template><system>// Place template instantiations here.
+CRD = Coordinates();
+TREEWALK = OcTreeWalk(ocTree1,pruned1);
+IDLE = Idle();
+
+// List one or more processes to be composed into a system.
+system  TREEWALK;</system></nta>
